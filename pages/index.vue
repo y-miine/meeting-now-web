@@ -1,70 +1,64 @@
 <template lang="pug">
-div
-  ul
-    li(v-for="item in messages") {{ item }}
+v-app
+  v-app-bar(app
+    color="primary"
+    dark)
+    v-toolbar-title みーてぃんぐなう
+  
+  v-content
+    template(v-if="isLoaded")
+      v-row(v-for="item in users")
+        v-col(cols="12")
+          v-card
+            v-list-item
+              V-list-item-avatar(size="100"): img(:src="item.image")
+              .title.ml-4 {{ item.name }}
+              v-chip.ml-4(
+                v-if="item.status"
+                color="red"
+                dark) ミーティング中
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
-
 export default {
-  components: {
-    AppLogo
-  },
-  data(){
+  data() {
     return {
-      socket: null,
-      messages: [
-        'hogehoge'
-      ]
+      isLoaded: false,
+      users: [
+        {
+          name: 'たろう',
+          image: '/user-01.png',
+          status: 0,
+        },
+        // {
+        //   name: "はなこ",
+        //   image: "https://placehold.jp/150x150.png",
+        //   status: 0
+        // }
+      ],
     }
   },
-  mounted() {
-    this.socket = this.$nuxtSocket({
-      // options
-    })
-    this.socket.on('new-message', (message) => {
-      this.messages.push(message)
-    })
+  async beforeMount() {
+    await this.updateStatus()
+    this.isLoaded = true
+    setInterval(this.updateStatus, 1000)
   },
   methods: {
-    getMessage() {
-      this.socket.emit('getMessage', { id: 'abc123' }, res => {
-        this.messages.append(res)
-      })
-    }
-  }
+    async updateStatus() {
+      const { data } = await this.$axios.get(`/status`)
+      this.users[0].status = data.meetingMode
+    },
+  },
 }
 </script>
 
 <style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+.v-content {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
+.v-card {
+  padding: 24px;
 }
 </style>
-

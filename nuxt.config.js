@@ -1,41 +1,21 @@
-module.exports = {
-  /*
-  ** Headers of the page
-  */
+import { start, stop, status } from './api'
+
+export default {
   head: {
-    title: 'meeting-now',
+    title: 'みーてぃんぐなう',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Nuxt.js project' }
+      { hid: 'description', name: 'description', content: 'Nuxt.js project' },
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
-  /*
-  ** Customize the progress bar color
-  */
-  loading: { color: '#3B8070' },
-  /*
-  ** Build configuration
-  */
-  modules: [
-    'nuxt-socket-io',
-    '@nuxtjs/axios'
+  loading: false,
+  buildModules: ['@nuxtjs/vuetify'],
+  modules: ['@nuxtjs/axios'],
+  serverMiddleware: [
+    { path: '/start', handler: start },
+    { path: '/stop', handler: stop },
+    { path: '/status', handler: status },
   ],
-  io: {
-    sockets: [
-      { name: 'message', url: 'https://webhook.site' },
-      // {
-      //   name: 'test',
-      //   url: 'http://localhost:4000',
-      //   vuex: {
-      //     mutations: ['examples/SET_PROGRESS'],
-      //     actions: ['FORMAT_MESSAGE']
-      //   }
-      // }
-    ]
-  }
 }
-
